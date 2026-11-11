@@ -11,9 +11,12 @@
       :root, [data-theme="dark"] { --bg:#0f0f12; --bg-soft:#16161a; --surface:#1c1c21; --surface-hover:#25252b; --border:#2e2e36; --text:#fafafa; --text-muted:#71717a; --accent:#6366f1; --accent-hover:#818cf8; --radius:16px; --radius-sm:10px; --shadow:0 8px 32px rgba(0,0,0,0.35); --focus-ring:rgba(99,102,241,0.35); }
       html[data-theme="light"] { --bg:#f8f9fc; --bg-soft:#eef0f5; --surface:#fff; --surface-hover:#f1f3f6; --border:#e4e6eb; --text:#18181b; --text-muted:#71717a; --accent:#4f46e5; --accent-hover:#6366f1; --shadow:0 8px 32px rgba(0,0,0,0.08); --focus-ring:rgba(79,70,229,0.3); }
       * { box-sizing: border-box; }
+      [hidden] { display: none !important; }
       body { margin: 0; min-height: 100vh; font-family: "Merriweather", Georgia, serif; background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; transition: background-color 0.25s ease, color 0.2s ease; }
-      .app { max-width: 520px; margin: 0 auto; padding: 2rem 1.5rem; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-      .header { position: relative; margin-bottom: 2rem; text-align: center; padding-right: 48px; }
+      button, input, select, textarea { font: inherit; color: inherit; }
+      button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .app { max-width: 1080px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+      .header { position: relative; margin-bottom: 1.5rem; text-align: center; padding-right: 48px; }
       .logo { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.03em; margin: 0 0 0.35rem 0; color: var(--text); }
       .theme-toggle { position: absolute; top: 0; right: 0; width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.1s; }
       .theme-toggle:hover { background: var(--surface-hover); border-color: var(--text-muted); }
@@ -24,33 +27,85 @@
       html[data-theme="light"] .theme-icon.sun { display: inline; }
       html[data-theme="light"] .theme-icon.moon { display: none; }
       .tagline { margin: 0; color: var(--text-muted); font-size: 1.0625rem; }
-      .main { width: 100%; }
-      .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
-      .hero-card { display: flex; flex-direction: column; gap: 2rem; }
-      .input-block .label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); margin-bottom: 0.5rem; }
-      .input { width: 100%; height: 2.75rem; padding: 0.5rem 1.25rem; font: inherit; font-size: 1rem; color: var(--text); background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); resize: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.25rem; align-items: start; }
+      .card { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
+      .preview-card { position: sticky; top: 1rem; display: flex; flex-direction: column; gap: 0.9rem; }
+      .input { width: 100%; padding: 0.65rem 1rem; font-size: 1rem; color: var(--text); background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm); resize: vertical; transition: border-color 0.2s, box-shadow 0.2s; }
       .input::placeholder { color: var(--text-muted); }
       .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
-      .preview-block { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
-      .preview-wrap { display: flex; align-items: center; justify-content: center; min-height: 240px; width: 100%; background: var(--bg-soft); border-radius: var(--radius-sm); border: 2px dashed var(--border); padding: 2rem; transition: background-color 0.25s ease, border-color 0.25s ease; }
-      .preview-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; color: var(--text-muted); font-size: 0.9375rem; text-align: center; }
+      textarea.input { min-height: 2.75rem; line-height: 1.45; }
+      .section { min-width: 0; display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.15rem; padding-top: 1.15rem; border-top: 1px solid var(--border); }
+      .section h2 { margin: 0; font-size: 1rem; font-weight: 700; }
+      .hint, .note { margin: 0; color: var(--text-muted); font-size: 0.8rem; }
+      .field-label { margin: 0; font-size: 0.82rem; font-weight: 700; color: var(--text); }
+      .sublabel { margin: 0; font-size: 0.78rem; color: var(--text-muted); }
+      .templates { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.15rem; min-width: 0; max-width: 100%; }
+      .template { flex: 0 0 auto; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.78rem; cursor: pointer; }
+      .template:hover { border-color: var(--text-muted); }
+      .template[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+      .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      .color-field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+      .color-line { display: flex; gap: 0.4rem; align-items: center; }
+      input[type="color"] { width: 42px; height: 36px; padding: 2px; border: 1px solid var(--border); background: var(--bg-soft); border-radius: 8px; cursor: pointer; flex: 0 0 auto; }
+      .hex { flex: 1; min-width: 0; height: 36px; padding: 0 0.6rem; font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace; font-size: 0.78rem; letter-spacing: 0.02em; }
+      .swatches { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+      .swatch { width: 22px; height: 22px; border-radius: 999px; border: 1px solid var(--border); padding: 0; cursor: pointer; }
+      .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+      .check { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; cursor: pointer; }
+      .check input { width: 1rem; height: 1rem; accent-color: var(--accent); }
+      .segment { display: flex; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; }
+      .segment button { flex: 1; border: 0; background: transparent; color: var(--text-muted); border-radius: 8px; padding: 0.4rem 0.25rem; font-size: 0.78rem; cursor: pointer; }
+      .segment button[aria-pressed="true"] { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.12); }
+      .shape-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 0.45rem; min-width: 0; }
+      .shape-btn { appearance: none; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); border-radius: 12px; padding: 0.4rem 0.2rem 0.45rem; cursor: pointer; font-size: 0.68rem; line-height: 1.2; display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; }
+      .shape-btn svg { width: 32px; height: 32px; display: block; }
+      .shape-btn:hover { border-color: var(--text-muted); }
+      .shape-btn[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); background: var(--surface); }
+      .stack { display: flex; flex-direction: column; gap: 0.35rem; }
+      .range-ends { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.72rem; }
+      input[type="range"] { width: 100%; accent-color: var(--accent); }
+      .is-dimmed { opacity: 0.45; pointer-events: none; }
+      .logo-row { display: flex; align-items: center; gap: 0.6rem; }
+      .logo-row img { width: 36px; height: 36px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: #fff; }
+      .logo-row span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.8rem; color: var(--text-muted); }
+      .file-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+      .preview-stage { min-width: 0; min-height: 280px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: var(--radius-sm); border: 2px dashed var(--border); padding: 1.25rem; overflow: hidden; }
+      .preview-stage.is-transparent { background-color: #e7e7ea; background-image: linear-gradient(45deg, #d4d4d8 25%, transparent 25%), linear-gradient(-45deg, #d4d4d8 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d4d4d8 75%), linear-gradient(-45deg, transparent 75%, #d4d4d8 75%); background-size: 18px 18px; background-position: 0 0, 0 9px, 9px -9px, -9px 0; }
+      .preview-stage svg { width: min(100%, 300px); height: auto; display: block; }
+      .preview-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; color: #71717a; font-size: 0.9375rem; text-align: center; }
       .preview-placeholder.hidden { display: none; }
-      .placeholder-icon { width: 4rem; height: 4rem; opacity: 0.5; color: var(--text-muted); }
-      .qr-canvas { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
-      .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
-      .btn { padding: 0.75rem 1.5rem; font: inherit; font-size: 0.9375rem; font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; border: none; transition: background 0.2s, transform 0.1s, border-color 0.2s; }
+      .placeholder-icon { width: 4rem; height: 4rem; opacity: 0.5; }
+      .notes { display: flex; flex-direction: column; gap: 0.45rem; }
+      .notes:empty { display: none; }
+      .warn { margin: 0; font-size: 0.8rem; color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 0.55rem 0.7rem; }
+      html[data-theme="dark"] .warn { color: #fdba74; background: #2a1a0c; border-color: #7c3f12; }
+      .err { margin: 0; font-size: 0.8rem; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.55rem 0.7rem; }
+      html[data-theme="dark"] .err { color: #fca5a5; background: #2a1212; border-color: #7f1d1d; }
+      .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+      .btn { padding: 0.7rem 1.1rem; font-size: 0.9rem; font-weight: 700; border-radius: var(--radius-sm); cursor: pointer; border: none; transition: background 0.2s, transform 0.1s, border-color 0.2s; }
       .btn:active { transform: scale(0.98); }
       .btn-primary { background: var(--accent); color: white; }
       .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
       .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
       .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--text-muted); }
       .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-      .footer { text-align: center; padding-top: 1rem; }
+      .reset-row { margin-top: 1rem; }
+      .footer { text-align: center; padding-top: 1.5rem; }
       .footer p { margin: 0; font-size: 0.8125rem; color: var(--text-muted); }
-      .footer a { color: var(--text-muted); font-size: 0.8125rem; text-decoration: none; transition: opacity 0.2s; }
+      .footer a { color: var(--text-muted); font-size: 0.8125rem; text-decoration: none; }
       .footer a:hover { opacity: 0.85; }
       .footer a img { display: block; height: 2.5rem; width: auto; margin: 0 auto; }
-      @media (max-width: 480px) { .app { padding: 1.25rem 1rem; } .card { padding: 1.5rem; } .preview-wrap { min-height: 200px; padding: 1.5rem; } }
+      @media (max-width: 860px) {
+        .layout { grid-template-columns: minmax(0, 1fr); }
+        .preview-card { position: static; order: -1; }
+        .header { padding-right: 52px; }
+      }
+      @media (max-width: 480px) {
+        .app { padding: 1.25rem 0.85rem 2rem; }
+        .card { padding: 1.1rem; }
+        .color-grid { grid-template-columns: 1fr; }
+        .logo { font-size: 1.5rem; }
+      }
     </style>
   </head>
   <body>
@@ -61,106 +116,1039 @@
           <span class="theme-icon moon" aria-hidden="true">🌙</span>
         </button>
         <h1 class="logo">Free & Instant QR Generator</h1>
-        <p class="tagline">Generate your QR code instantly for free.</p>
+        <p class="tagline">Colors, bullet shapes, corner borders, and frames — still instant and free.</p>
       </header>
-      <main class="main">
-        <div class="hero-card card">
+      <div class="layout">
+        <section class="card" aria-label="QR design">
           <div class="input-block">
-            <textarea id="content" class="input" rows="1" placeholder="Type a text or URL..." maxlength="2000"></textarea>
+            <label class="field-label" for="content">Text or URL</label>
+            <textarea id="content" class="input" rows="2" placeholder="Type a text or URL..." maxlength="2000" spellcheck="false" style="margin-top: 0.45rem;"></textarea>
           </div>
-          <div class="preview-block">
-            <div class="preview-wrap">
-              <div class="preview-placeholder" id="placeholder">
-                <div class="placeholder-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
-                    <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/>
-                    <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/>
-                    <rect x="14" y="14" width="2" height="2" fill="currentColor"/>
-                    <rect x="18" y="14" width="3" height="3" rx="0.5" fill="currentColor"/>
-                    <rect x="14" y="18" width="3" height="3" rx="0.5" fill="currentColor"/>
-                    <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
-                  </svg>
+
+          <div class="section">
+            <h2>Templates</h2>
+            <div id="templates" class="templates" role="group" aria-label="Design templates"></div>
+          </div>
+
+          <div class="section">
+            <h2>Colors</h2>
+            <div class="color-grid">
+              <div class="color-field">
+                <span class="sublabel" id="fgLabel">Bullets</span>
+                <div class="color-line">
+                  <input type="color" id="fgPicker" aria-labelledby="fgLabel" value="#111827" />
+                  <input id="fgHex" class="input hex" aria-label="Bullet color hex" value="#111827" maxlength="7" spellcheck="false" />
                 </div>
-                <span>Your QR code will appear here</span>
+                <div id="inkSwatches" class="swatches" role="group" aria-label="Bullet color presets"></div>
               </div>
-              <canvas id="qrCanvas" class="qr-canvas" style="display: none;"></canvas>
+              <div class="color-field">
+                <span class="sublabel" id="bgLabel">Background</span>
+                <div class="color-line">
+                  <input type="color" id="bgPicker" aria-labelledby="bgLabel" value="#ffffff" />
+                  <input id="bgHex" class="input hex" aria-label="Background color hex" value="#FFFFFF" maxlength="7" spellcheck="false" />
+                </div>
+                <div id="paperSwatches" class="swatches" role="group" aria-label="Background color presets"></div>
+              </div>
             </div>
-            <div class="actions">
-              <button type="button" id="downloadPng" class="btn btn-primary" disabled>Download PNG</button>
-              <button type="button" id="downloadSvg" class="btn btn-secondary" disabled>Download SVG</button>
+            <label class="check"><input type="checkbox" id="transparent" /> Transparent background</label>
+            <label class="check"><input type="checkbox" id="gradient" /> Two-color gradient</label>
+            <div id="gradientFields" class="stack" hidden>
+              <div class="color-field">
+                <span class="sublabel" id="g2Label">Second color</span>
+                <div class="color-line">
+                  <input type="color" id="g2Picker" aria-labelledby="g2Label" value="#6366f1" />
+                  <input id="g2Hex" class="input hex" aria-label="Gradient second color hex" value="#6366F1" maxlength="7" spellcheck="false" />
+                </div>
+              </div>
+              <div class="segment" id="gradType" role="group" aria-label="Gradient type">
+                <button type="button" data-value="linear">Linear</button>
+                <button type="button" data-value="radial">Radial</button>
+              </div>
+              <div class="segment" id="gradDir" role="group" aria-label="Gradient direction">
+                <button type="button" data-value="lr" aria-label="Left to right">Left</button>
+                <button type="button" data-value="tb" aria-label="Top to bottom">Down</button>
+                <button type="button" data-value="down" aria-label="Diagonal down">Diagonal</button>
+                <button type="button" data-value="up" aria-label="Diagonal up">Rise</button>
+              </div>
+              <label class="check"><input type="checkbox" id="gradientOnEyes" /> Extend the gradient across the corners</label>
+            </div>
+            <div id="eyeColorFields" class="stack">
+              <label class="check"><input type="checkbox" id="eyeFrameMatch" /> Corner border matches the bullets</label>
+              <div class="color-field" id="eyeFrameColorField">
+                <span class="sublabel" id="eyeFrameLabel">Corner border</span>
+                <div class="color-line">
+                  <input type="color" id="eyeFramePicker" aria-labelledby="eyeFrameLabel" value="#4f46e5" />
+                  <input id="eyeFrameHex" class="input hex" aria-label="Corner border color hex" value="#4F46E5" maxlength="7" spellcheck="false" />
+                </div>
+              </div>
+              <label class="check"><input type="checkbox" id="eyeBallMatch" /> Corner center matches the bullets</label>
+              <div class="color-field" id="eyeBallColorField">
+                <span class="sublabel" id="eyeBallLabel">Corner center</span>
+                <div class="color-line">
+                  <input type="color" id="eyeBallPicker" aria-labelledby="eyeBallLabel" value="#111827" />
+                  <input id="eyeBallHex" class="input hex" aria-label="Corner center color hex" value="#111827" maxlength="7" spellcheck="false" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+
+          <div class="section">
+            <h2>Shapes</h2>
+            <p class="hint">Bullets are the small marks. The corner border is the frame of each of the three eyes, and the center is the mark inside it.</p>
+            <p class="field-label" id="bulletsLabel">Bullets</p>
+            <div id="bodyShapes" class="shape-grid" role="group" aria-labelledby="bulletsLabel"></div>
+            <p class="field-label" id="eyeFrameShapeLabel">Corner border</p>
+            <div id="eyeFrameShapes" class="shape-grid" role="group" aria-labelledby="eyeFrameShapeLabel"></div>
+            <p class="field-label" id="eyeBallShapeLabel">Corner center</p>
+            <div id="eyeBallShapes" class="shape-grid" role="group" aria-labelledby="eyeBallShapeLabel"></div>
+            <p class="field-label">Code outline</p>
+            <div class="segment" id="codeShape" role="group" aria-label="Code outline">
+              <button type="button" data-value="square">Square</button>
+              <button type="button" data-value="circle">Circle</button>
+            </div>
+            <div class="stack">
+              <span class="field-label" id="roundLabel">Background corners</span>
+              <input id="bgRound" type="range" min="0" max="100" step="1" aria-labelledby="roundLabel" />
+              <div class="range-ends"><span>Square</span><span>Round</span></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Outer frame</h2>
+            <p class="hint">A frame sits outside the quiet zone, with an optional call to action like “SCAN ME”.</p>
+            <div id="frameShapes" class="shape-grid" role="group" aria-label="Outer frame"></div>
+            <div id="frameOptions" class="stack">
+              <label class="field-label" for="frameText">Label</label>
+              <input id="frameText" class="input" maxlength="32" placeholder="SCAN ME" />
+              <div class="color-field" id="frameColorField">
+                <span class="sublabel" id="frameColorLabel">Frame color</span>
+                <div class="color-line">
+                  <input type="color" id="frameColorPicker" aria-labelledby="frameColorLabel" value="#4f46e5" />
+                  <input id="frameColorHex" class="input hex" aria-label="Frame color hex" value="#4F46E5" maxlength="7" spellcheck="false" />
+                </div>
+              </div>
+              <div class="color-field" id="frameTextColorField">
+                <span class="sublabel" id="frameTextColorLabel">Label color</span>
+                <div class="color-line">
+                  <input type="color" id="frameTextPicker" aria-labelledby="frameTextColorLabel" value="#ffffff" />
+                  <input id="frameTextHex" class="input hex" aria-label="Label color hex" value="#FFFFFF" maxlength="7" spellcheck="false" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Logo</h2>
+            <p class="hint">A logo sits in the center. High error correction keeps the code scannable.</p>
+            <div class="actions">
+              <label class="btn btn-secondary file-btn">Upload logo<input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" hidden /></label>
+              <button type="button" id="logoClear" class="btn btn-secondary" hidden>Remove</button>
+            </div>
+            <div id="logoRow" class="logo-row" hidden>
+              <img id="logoThumb" alt="" />
+              <span id="logoName"></span>
+            </div>
+            <div id="logoOptions" class="stack" hidden>
+              <span class="field-label" id="logoSizeLabel">Logo size</span>
+              <input id="logoSize" type="range" min="18" max="46" step="1" aria-labelledby="logoSizeLabel" />
+              <div class="range-ends"><span>Small</span><span>Large</span></div>
+              <span class="field-label" id="logoMarginLabel">Space around logo</span>
+              <input id="logoMargin" type="range" min="0" max="24" step="1" aria-labelledby="logoMarginLabel" />
+              <div class="range-ends"><span>None</span><span>Room</span></div>
+              <label class="check"><input type="checkbox" id="logoClearDots" /> Clear the bullets behind the logo</label>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Quality</h2>
+            <div class="stack">
+              <label class="field-label" for="ecl">Error correction</label>
+              <select id="ecl" class="input">
+                <option value="L">Low — about 7% covered</option>
+                <option value="M">Medium — about 15% covered</option>
+                <option value="Q">Quartile — about 25% covered</option>
+                <option value="H">High — about 30% covered</option>
+              </select>
+            </div>
+            <div class="stack">
+              <span class="field-label" id="marginLabel">Quiet zone</span>
+              <input id="margin" type="range" min="0" max="64" step="1" aria-labelledby="marginLabel" />
+              <div class="range-ends"><span>Tight</span><span>Wide</span></div>
+            </div>
+            <div class="reset-row">
+              <button type="button" id="resetDesign" class="btn btn-secondary">Reset design</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card preview-card">
+          <h2 style="margin: 0; font-size: 1rem;">Preview</h2>
+          <div class="preview-stage" id="stage">
+            <div class="preview-placeholder" id="placeholder">
+              <div class="placeholder-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/>
+                  <rect x="14" y="14" width="2" height="2" fill="currentColor"/>
+                  <rect x="18" y="14" width="3" height="3" rx="0.5" fill="currentColor"/>
+                  <rect x="14" y="18" width="3" height="3" rx="0.5" fill="currentColor"/>
+                  <rect x="11" y="11" width="2" height="2" fill="currentColor"/>
+                </svg>
+              </div>
+              <span>Your QR code will appear here</span>
+            </div>
+          </div>
+          <div id="notes" class="notes" aria-live="polite"></div>
+          <p id="designError" class="err" hidden></p>
+          <div class="actions">
+            <button type="button" id="downloadPng" class="btn btn-primary" disabled>Download PNG</button>
+            <button type="button" id="downloadSvg" class="btn btn-secondary" disabled>Download SVG</button>
+          </div>
+        </aside>
+      </div>
       <footer class="footer">
         <p>100% free • No sign-up required • No data stored</p>
         <p style="margin-top: 0.75rem;"><a href="https://buymeacoffee.com/odisseasmk" target="_blank" rel="noopener noreferrer" aria-label="Buy me a coffee"><img src="assets/bmc-logo.png" alt="Buy me a coffee" /></a></p>
       </footer>
     </div>
     <script type="module">
-      import QRCode from "https://esm.sh/qrcode@1.5.3";
-      const contentEl = document.getElementById("content");
-      const placeholderEl = document.getElementById("placeholder");
-      const qrCanvas = document.getElementById("qrCanvas");
-      const downloadPngBtn = document.getElementById("downloadPng");
-      const downloadSvgBtn = document.getElementById("downloadSvg");
-      const themeToggle = document.getElementById("themeToggle");
-      let lastSvgString = "";
-      const QR_OPTS = { width: 256, margin: 2, color: { dark: "#111827", light: "#ffffff" }, errorCorrectionLevel: "M" };
-      function renderQR() {
-        const text = (contentEl.value || "").trim();
+      import QRCodeStyling from "https://esm.sh/qr-code-styling@1.9.2";
+
+      const PREVIEW = 320;
+      const EXPORT = 1200;
+      const DESIGN_KEY = "qr-generator-design";
+      const THEME_KEY = "qr-generator-theme";
+      const HEX = /^#[0-9a-fA-F]{6}$/;
+      const GRADIENT_ROT = { lr: 0, tb: Math.PI / 2, down: Math.PI / 4, up: -Math.PI / 4 };
+      const INK = ["#111827", "#1d4ed8", "#4f46e5", "#0f766e", "#b45309", "#dc2626", "#be185d", "#6d28d9"];
+      const PAPER = ["#ffffff", "#f8fafc", "#fff7ed", "#ecfeff", "#f0fdf4", "#fff1f2", "#f5f3ff", "#0f172a"];
+      const BODY = [
+        ["square", "Square", "Square bullets"],
+        ["rounded", "Rounded", "Rounded bullets"],
+        ["extra-rounded", "Extra", "Extra rounded bullets"],
+        ["dots", "Dots", "Dot bullets"],
+        ["classy", "Classy", "Classy bullets"],
+        ["classy-rounded", "Classy+", "Classy rounded bullets"],
+      ];
+      const EYE_FRAME = [
+        ["square", "Square", "Square corner border"],
+        ["rounded", "Rounded", "Rounded corner border"],
+        ["extra-rounded", "Extra", "Extra rounded corner border"],
+        ["dot", "Circle", "Circle corner border"],
+        ["dots", "Dots", "Dotted corner border"],
+        ["classy", "Classy", "Classy corner border"],
+        ["classy-rounded", "Classy+", "Classy rounded corner border"],
+      ];
+      const EYE_BALL = [
+        ["square", "Square", "Square corner center"],
+        ["rounded", "Rounded", "Rounded corner center"],
+        ["extra-rounded", "Extra", "Extra rounded corner center"],
+        ["dot", "Circle", "Circle corner center"],
+        ["dots", "Dots", "Dotted corner center"],
+        ["classy", "Classy", "Classy corner center"],
+        ["classy-rounded", "Classy+", "Classy rounded corner center"],
+      ];
+      const FRAME_LIST = [
+        ["none", "None", "No frame"],
+        ["square", "Square", "Square frame"],
+        ["rounded", "Rounded", "Rounded frame"],
+        ["thick", "Bold", "Bold frame"],
+        ["double", "Double", "Double frame"],
+        ["stamp", "Stamp", "Dashed stamp frame"],
+        ["banner", "Banner", "Bottom banner"],
+        ["banner-top", "Top", "Top banner"],
+        ["balloon", "Balloon", "Balloon frame"],
+        ["circle", "Circle", "Circle frame"],
+        ["brackets", "Corners", "Corner brackets"],
+        ["ticket", "Ticket", "Ticket frame"],
+        ["ribbon", "Ribbon", "Ribbon frame"],
+        ["tab", "Tab", "Tab frame"],
+      ];
+      const LABEL_ON_BAND = new Set(["banner", "banner-top", "ticket", "ribbon", "tab"]);
+      const DEFAULTS = {
+        body: "square",
+        eyeFrame: "square",
+        eyeBall: "square",
+        fg: "#111827",
+        bg: "#ffffff",
+        transparent: false,
+        eyeFrameMatch: true,
+        eyeFrameColor: "#4f46e5",
+        eyeBallMatch: true,
+        eyeBallColor: "#111827",
+        gradient: false,
+        gradientType: "linear",
+        gradientDir: "lr",
+        gradient2: "#6366f1",
+        gradientOnEyes: true,
+        shape: "square",
+        bgRound: 0,
+        margin: 20,
+        ecl: "M",
+        logo: "",
+        logoName: "",
+        logoSize: 0.4,
+        logoMargin: 4,
+        logoClear: true,
+        frame: "none",
+        frameColor: "#4f46e5",
+        frameText: "SCAN ME",
+        frameTextColor: "#ffffff",
+        frameTextAuto: true,
+      };
+      const TEMPLATES = [
+        { id: "classic", name: "Classic", body: "square", eyeFrame: "square", eyeBall: "square", fg: "#111827", bg: "#ffffff", transparent: false, gradient: false, shape: "square", bgRound: 0, frame: "none", eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+        { id: "rounded", name: "Rounded", body: "rounded", eyeFrame: "extra-rounded", eyeBall: "dot", fg: "#4f46e5", bg: "#ffffff", transparent: false, gradient: false, shape: "square", bgRound: 0, frame: "none", eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+        { id: "dots", name: "Dots", body: "dots", eyeFrame: "dot", eyeBall: "dot", fg: "#0f172a", bg: "#ffffff", transparent: false, gradient: false, shape: "square", bgRound: 0, frame: "none", eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+        { id: "classy", name: "Classy", body: "classy", eyeFrame: "square", eyeBall: "square", fg: "#1c1917", bg: "#faf7f2", transparent: false, gradient: false, shape: "square", bgRound: 12, frame: "none", eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+        { id: "smooth", name: "Smooth", body: "extra-rounded", eyeFrame: "extra-rounded", eyeBall: "dot", fg: "#0f766e", bg: "#f0fdfa", transparent: false, gradient: false, shape: "square", bgRound: 8, frame: "none", eyeFrameMatch: false, eyeFrameColor: "#115e59", eyeBallMatch: true, gradientOnEyes: true },
+        { id: "sunset", name: "Sunset", body: "rounded", eyeFrame: "extra-rounded", eyeBall: "dot", fg: "#f97316", gradient2: "#db2777", gradient: true, gradientType: "linear", gradientDir: "down", gradientOnEyes: true, bg: "#fff7ed", transparent: false, shape: "square", bgRound: 0, frame: "none", eyeFrameMatch: true, eyeBallMatch: true },
+        { id: "ocean", name: "Ocean", body: "classy-rounded", eyeFrame: "extra-rounded", eyeBall: "dot", fg: "#075985", gradient2: "#0f766e", gradient: true, gradientType: "linear", gradientDir: "tb", gradientOnEyes: false, eyeFrameMatch: false, eyeFrameColor: "#0c4a6e", eyeBallMatch: false, eyeBallColor: "#115e59", bg: "#f0f9ff", transparent: false, shape: "square", bgRound: 0, frame: "none" },
+        { id: "circle", name: "Circle", body: "dots", eyeFrame: "dot", eyeBall: "dot", fg: "#111827", bg: "#ffffff", transparent: false, gradient: false, shape: "circle", bgRound: 100, frame: "none", eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+        { id: "scan", name: "Scan me", body: "rounded", eyeFrame: "extra-rounded", eyeBall: "dot", fg: "#111827", bg: "#ffffff", transparent: false, gradient: false, shape: "square", bgRound: 0, frame: "banner", frameColor: "#4f46e5", frameText: "SCAN ME", frameTextAuto: true, eyeFrameMatch: true, eyeBallMatch: true, gradientOnEyes: true },
+      ];
+
+      const state = { ...DEFAULTS };
+      const $ = (id) => document.getElementById(id);
+      const contentEl = $("content");
+      const stage = $("stage");
+      const placeholderEl = $("placeholder");
+      const notesEl = $("notes");
+      const errorEl = $("designError");
+      const downloadPngBtn = $("downloadPng");
+      const downloadSvgBtn = $("downloadSvg");
+
+      let renderToken = 0;
+      let renderTimer = 0;
+      let lastSvg = "";
+      let busy = false;
+
+      function esc(value) {
+        return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      }
+      function clamp(n, min, max) {
+        return Math.min(max, Math.max(min, Number(n) || 0));
+      }
+      function luminance(hex) {
+        const h = hex.replace("#", "");
+        const channel = (i) => {
+          const v = parseInt(h.slice(i, i + 2), 16) / 255;
+          return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+        };
+        return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
+      }
+      function contrast(a, b) {
+        const hi = Math.max(luminance(a), luminance(b));
+        const lo = Math.min(luminance(a), luminance(b));
+        return (hi + 0.05) / (lo + 0.05);
+      }
+      function contrastText(hex) {
+        return contrast(hex, "#ffffff") > contrast(hex, "#111827") ? "#ffffff" : "#111827";
+      }
+      function oneOf(value, allowed, fallback) {
+        return allowed.includes(value) ? value : fallback;
+      }
+
+      function iconWrap(inner) {
+        return `<svg viewBox="0 0 36 36" aria-hidden="true">${inner}</svg>`;
+      }
+      function iconPattern(type) {
+        const cell = (x, y) => {
+          if (type === "dots") return `<circle cx="${x + 4}" cy="${y + 4}" r="3" fill="currentColor"/>`;
+          if (type === "rounded") return `<rect x="${x + 1}" y="${y + 1}" width="6.5" height="6.5" rx="1.8" fill="currentColor"/>`;
+          if (type === "extra-rounded") return `<rect x="${x + 0.8}" y="${y + 0.8}" width="6.8" height="6.8" rx="3.2" fill="currentColor"/>`;
+          if (type === "classy") return `<path d="M${x + 1} ${y + 1} h6 v3.2 q0 2.6 -2.6 2.6 h-3.4 z" fill="currentColor"/>`;
+          if (type === "classy-rounded") return `<path d="M${x + 1.2} ${y + 2.4} q0 -1.4 1.4 -1.4 h3.6 q1.4 0 1.4 1.4 v3.4 q0 1.6 -1.6 1.6 h-3.4 q-1.4 0 -1.4 -1.4 z" fill="currentColor"/>`;
+          return `<rect x="${x + 1}" y="${y + 1}" width="6.5" height="6.5" fill="currentColor"/>`;
+        };
+        const spots = [2, 13, 24];
+        return iconWrap(spots.flatMap((y) => spots.map((x) => cell(x, y))).join(""));
+      }
+      function iconEyeFrame(type) {
+        let outer = `<rect x="6" y="6" width="24" height="24" fill="none" stroke="currentColor" stroke-width="5"/>`;
+        if (type === "dot" || type === "dots") outer = `<circle cx="18" cy="18" r="12" fill="none" stroke="currentColor" stroke-width="5"/>`;
+        else if (type === "extra-rounded") outer = `<rect x="6" y="6" width="24" height="24" rx="9" fill="none" stroke="currentColor" stroke-width="5"/>`;
+        else if (type === "rounded" || type === "classy-rounded") outer = `<rect x="6" y="6" width="24" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="5"/>`;
+        else if (type === "classy") outer = `<path d="M8 8 h14 q6 0 6 6 v14 h-8 q-6 0 -6 -6 v-8 q0 -6 -6 -6 z" fill="none" stroke="currentColor" stroke-width="4.5"/>`;
+        return iconWrap(`${outer}<circle cx="18" cy="18" r="3" fill="currentColor"/>`);
+      }
+      function iconEyeBall(type) {
+        let mark = `<rect x="11" y="11" width="14" height="14" fill="currentColor"/>`;
+        if (type === "dot" || type === "dots") mark = `<circle cx="18" cy="18" r="7" fill="currentColor"/>`;
+        else if (type === "extra-rounded") mark = `<rect x="11" y="11" width="14" height="14" rx="6" fill="currentColor"/>`;
+        else if (type === "rounded" || type === "classy-rounded") mark = `<rect x="11" y="11" width="14" height="14" rx="3.5" fill="currentColor"/>`;
+        else if (type === "classy") mark = `<path d="M11 11 h12 v6 q0 6 -6 6 h-6 z" fill="currentColor"/>`;
+        return iconWrap(`<rect x="5" y="5" width="26" height="26" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" opacity="0.35"/>${mark}`);
+      }
+      function iconFrame(type) {
+        const windowed = `<rect x="11" y="10" width="14" height="12" fill="currentColor" opacity="0.85"/>`;
+        const icons = {
+          none: `<rect x="9" y="9" width="18" height="18" rx="1" fill="currentColor"/>`,
+          square: `<rect x="6" y="6" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"/>${windowed}`,
+          rounded: `<rect x="6" y="6" width="24" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>${windowed}`,
+          thick: `<rect x="4" y="4" width="28" height="28" rx="4" fill="currentColor"/><rect x="11" y="11" width="14" height="14" fill="none" stroke="currentColor" stroke-width="6" opacity="0.35"/>`,
+          double: `<rect x="5" y="5" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="9" y="9" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="14" width="8" height="8" fill="currentColor"/>`,
+          stamp: `<rect x="6" y="6" width="24" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"/><rect x="13" y="13" width="10" height="10" fill="currentColor"/>`,
+          banner: `<rect x="6" y="3" width="24" height="30" rx="3" fill="currentColor" opacity="0.9"/><rect x="10" y="7" width="16" height="15" fill="currentColor" opacity="0.35"/>`,
+          "banner-top": `<rect x="6" y="3" width="24" height="30" rx="3" fill="currentColor" opacity="0.9"/><rect x="10" y="14" width="16" height="15" fill="currentColor" opacity="0.35"/>`,
+          balloon: `<rect x="7" y="3" width="22" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="15,21 21,21 18,26" fill="currentColor"/>`,
+          circle: `<circle cx="18" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"/><rect x="13" y="11" width="10" height="10" fill="currentColor"/>`,
+          brackets: `<path d="M8 14 V8 H14 M22 8 H28 V14 M28 22 V28 H22 M14 28 H8 V22" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="14" y="14" width="8" height="8" fill="currentColor"/>`,
+          ticket: `<rect x="5" y="6" width="26" height="24" rx="3" fill="currentColor" opacity="0.9"/><circle cx="5" cy="16" r="2.5" fill="currentColor" opacity="0.35"/><circle cx="31" cy="16" r="2.5" fill="currentColor" opacity="0.35"/>`,
+          ribbon: `<rect x="8" y="5" width="20" height="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 24 h22 l-3 5 H10 z" fill="currentColor"/>`,
+          tab: `<rect x="7" y="5" width="22" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="22" width="14" height="8" rx="4" fill="currentColor"/>`,
+        };
+        return iconWrap(icons[type] || icons.none);
+      }
+
+      function mountChoices(container, items, key, icon) {
+        container.innerHTML = items.map(([id, label, title]) => `
+          <button type="button" class="shape-btn" data-key="${key}" data-value="${id}" title="${esc(title)}" aria-label="${esc(title)}">
+            ${icon(id)}
+            <span>${esc(label)}</span>
+          </button>`).join("");
+      }
+      function mountSwatches(container, colors, key) {
+        container.innerHTML = colors.map((color) => `
+          <button type="button" class="swatch" data-key="${key}" data-value="${color}" style="background:${color}" aria-label="${color}"></button>`).join("");
+      }
+      function mountTemplates() {
+        $("templates").innerHTML = TEMPLATES.map((t) => `
+          <button type="button" class="template" data-template="${t.id}">${esc(t.name)}</button>`).join("");
+      }
+
+      function setPair(picker, hex, value) {
+        const next = HEX.test(value) ? value.toLowerCase() : "#111827";
+        picker.value = next;
+        hex.value = next.toUpperCase();
+      }
+      function readHex(input, fallback) {
+        const raw = input.value.trim();
+        const withHash = raw.startsWith("#") ? raw : `#${raw}`;
+        return HEX.test(withHash) ? withHash.toLowerCase() : fallback;
+      }
+      function press(container, value) {
+        container.querySelectorAll("button").forEach((btn) => {
+          btn.setAttribute("aria-pressed", String(btn.dataset.value === value));
+        });
+      }
+      function eyesUseGradient() {
+        return state.gradient && state.gradientOnEyes;
+      }
+
+      function syncUI() {
+        setPair($("fgPicker"), $("fgHex"), state.fg);
+        setPair($("bgPicker"), $("bgHex"), state.bg);
+        setPair($("g2Picker"), $("g2Hex"), state.gradient2);
+        setPair($("eyeFramePicker"), $("eyeFrameHex"), state.eyeFrameColor);
+        setPair($("eyeBallPicker"), $("eyeBallHex"), state.eyeBallColor);
+        setPair($("frameColorPicker"), $("frameColorHex"), state.frameColor);
+        setPair($("frameTextPicker"), $("frameTextHex"), state.frameTextColor);
+        $("transparent").checked = state.transparent;
+        $("gradient").checked = state.gradient;
+        $("gradientOnEyes").checked = state.gradientOnEyes;
+        $("eyeFrameMatch").checked = state.eyeFrameMatch;
+        $("eyeBallMatch").checked = state.eyeBallMatch;
+        $("logoClearDots").checked = state.logoClear;
+        $("frameText").value = state.frameText;
+        $("ecl").value = state.ecl;
+        $("margin").value = String(state.margin);
+        $("bgRound").value = String(state.bgRound);
+        $("logoSize").value = String(Math.round(state.logoSize * 100));
+        $("logoMargin").value = String(state.logoMargin);
+        $("bgPicker").disabled = state.transparent;
+        $("bgHex").disabled = state.transparent;
+        $("gradientFields").hidden = !state.gradient;
+        $("gradDir").hidden = state.gradientType !== "linear";
+        const lockEyes = eyesUseGradient();
+        $("eyeColorFields").classList.toggle("is-dimmed", lockEyes);
+        $("eyeFrameColorField").classList.toggle("is-dimmed", state.eyeFrameMatch);
+        $("eyeBallColorField").classList.toggle("is-dimmed", state.eyeBallMatch);
+        $("frameOptions").hidden = state.frame === "none";
+        $("frameTextColorField").hidden = !LABEL_ON_BAND.has(state.frame);
+        const hasLogo = Boolean(state.logo);
+        $("logoRow").hidden = !hasLogo;
+        $("logoOptions").hidden = !hasLogo;
+        $("logoClear").hidden = !hasLogo;
+        $("logoThumb").src = state.logo || "";
+        $("logoName").textContent = state.logoName || "Logo";
+        press($("bodyShapes"), state.body);
+        press($("eyeFrameShapes"), state.eyeFrame);
+        press($("eyeBallShapes"), state.eyeBall);
+        press($("frameShapes"), state.frame);
+        press($("gradType"), state.gradientType);
+        press($("gradDir"), state.gradientDir);
+        press($("codeShape"), state.shape);
+        $("inkSwatches").querySelectorAll(".swatch").forEach((btn) => {
+          btn.setAttribute("aria-pressed", String(btn.dataset.value.toLowerCase() === state.fg));
+        });
+        $("paperSwatches").querySelectorAll(".swatch").forEach((btn) => {
+          btn.setAttribute("aria-pressed", String(!state.transparent && btn.dataset.value.toLowerCase() === state.bg));
+        });
+        syncTemplates();
+        stage.classList.toggle("is-transparent", state.transparent && state.frame === "none");
+      }
+
+      function syncTemplates() {
+        $("templates").querySelectorAll(".template").forEach((btn) => {
+          const template = TEMPLATES.find((item) => item.id === btn.dataset.template);
+          const on = Object.entries(template).every(([key, value]) => key === "id" || key === "name" || state[key] === value);
+          btn.setAttribute("aria-pressed", String(on));
+        });
+      }
+      function persist() {
+        const saved = { ...state };
+        delete saved.logo;
+        delete saved.logoName;
+        try { localStorage.setItem(DESIGN_KEY, JSON.stringify(saved)); } catch (_) {}
+      }
+      function loadDesign() {
+        try {
+          const raw = JSON.parse(localStorage.getItem(DESIGN_KEY) || "null");
+          if (!raw || typeof raw !== "object") return;
+          const shapes = ["square", "rounded", "extra-rounded", "dots", "classy", "classy-rounded"];
+          const eyeFrames = ["square", "rounded", "extra-rounded", "dot", "dots", "classy", "classy-rounded"];
+          state.body = oneOf(raw.body, shapes, state.body);
+          state.eyeFrame = oneOf(raw.eyeFrame, eyeFrames, state.eyeFrame);
+          state.eyeBall = oneOf(raw.eyeBall, eyeFrames, state.eyeBall);
+          state.shape = oneOf(raw.shape, ["square", "circle"], state.shape);
+          state.frame = oneOf(raw.frame, FRAME_LIST.map(([id]) => id), state.frame);
+          state.gradientType = oneOf(raw.gradientType, ["linear", "radial"], state.gradientType);
+          state.gradientDir = oneOf(raw.gradientDir, ["lr", "tb", "down", "up"], state.gradientDir);
+          state.ecl = oneOf(raw.ecl, ["L", "M", "Q", "H"], state.ecl);
+          for (const key of ["fg", "bg", "gradient2", "eyeFrameColor", "eyeBallColor", "frameColor", "frameTextColor"]) {
+            if (typeof raw[key] === "string" && HEX.test(raw[key])) state[key] = raw[key].toLowerCase();
+          }
+          for (const key of ["transparent", "eyeFrameMatch", "eyeBallMatch", "gradient", "gradientOnEyes", "logoClear", "frameTextAuto"]) {
+            if (typeof raw[key] === "boolean") state[key] = raw[key];
+          }
+          if (typeof raw.frameText === "string") state.frameText = raw.frameText.slice(0, 32);
+          state.bgRound = clamp(raw.bgRound, 0, 100);
+          state.margin = clamp(raw.margin, 0, 64);
+          state.logoSize = clamp(raw.logoSize, 0.18, 0.46);
+          state.logoMargin = clamp(raw.logoMargin, 0, 24);
+          if (state.frameTextAuto) state.frameTextColor = contrastText(state.frameColor);
+        } catch (_) {}
+      }
+
+      function applyTemplate(id) {
+        const template = TEMPLATES.find((item) => item.id === id);
+        if (!template) return;
+        const { id: _id, name: _name, ...rest } = template;
+        Object.assign(state, rest);
+        if (state.frameTextAuto) state.frameTextColor = contrastText(state.frameColor);
+        syncUI();
+        persist();
+        schedule();
+      }
+      function resetDesign() {
+        Object.assign(state, DEFAULTS);
+        state.frameTextColor = contrastText(state.frameColor);
+        syncUI();
+        persist();
+        schedule();
+      }
+
+      function buildOptions(data, size) {
+        const scale = size / PREVIEW;
+        const dots = { type: state.body, roundSize: true };
+        if (state.gradient) {
+          dots.gradient = {
+            type: state.gradientType,
+            rotation: GRADIENT_ROT[state.gradientDir] || 0,
+            colorStops: [
+              { offset: 0, color: state.fg },
+              { offset: 1, color: state.gradient2 },
+            ],
+          };
+        } else {
+          dots.color = state.fg;
+        }
+        const cornersSquare = { type: state.eyeFrame };
+        const cornersDot = { type: state.eyeBall };
+        if (!eyesUseGradient()) {
+          if (state.gradient || !state.eyeFrameMatch) cornersSquare.color = state.eyeFrameMatch ? state.fg : state.eyeFrameColor;
+          if (state.gradient || !state.eyeBallMatch) cornersDot.color = state.eyeBallMatch ? state.fg : state.eyeBallColor;
+        }
+        const options = {
+          width: size,
+          height: size,
+          type: "svg",
+          shape: state.shape,
+          data,
+          margin: Math.round(state.margin * scale),
+          qrOptions: { errorCorrectionLevel: state.ecl, typeNumber: 0 },
+          dotsOptions: dots,
+          cornersSquareOptions: cornersSquare,
+          cornersDotOptions: cornersDot,
+          backgroundOptions: {
+            color: state.transparent ? "transparent" : state.bg,
+            round: state.bgRound / 100,
+          },
+        };
+        if (state.logo) {
+          options.image = state.logo;
+          options.imageOptions = {
+            hideBackgroundDots: state.logoClear,
+            imageSize: state.logoSize,
+            margin: Math.round(state.logoMargin * scale),
+            crossOrigin: "anonymous",
+          };
+        }
+        return options;
+      }
+
+      function placeQr(svg, x, y, size) {
+        return svg.replace(/<svg\b([^>]*)>/i, (_, attrs) => {
+          const cleaned = attrs.replace(/\s(?:width|height|x|y)="[^"]*"/g, "");
+          return `<svg${cleaned} x="${x}" y="${y}" width="${size}" height="${size}">`;
+        });
+      }
+      function labelText(text, x, y, color, maxWidth, preferred) {
+        const clean = text.trim();
+        if (!clean) return "";
+        const size = Math.max(preferred * 0.42, Math.min(preferred, maxWidth / (clean.length * 0.58)));
+        return `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" fill="${esc(color)}" font-family="Georgia, 'Times New Roman', serif" font-size="${size.toFixed(1)}" font-weight="700" letter-spacing="0.04em" text-anchor="middle" dominant-baseline="middle">${esc(clean)}</text>`;
+      }
+      function maskWindow(w, h, x, y, size, extra = "") {
+        return `<mask id="frame-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="${w}" height="${h}"><rect width="${w}" height="${h}" fill="#fff"/>${extra}<rect x="${x - 1}" y="${y - 1}" width="${size + 2}" height="${size + 2}" fill="#000"/></mask>`;
+      }
+      function withCaption(w, artH, x, y, decor, textColor) {
+        const caption = state.frameText.trim() ? Math.round((artH) * 0.16) : 0;
+        const next = caption ? decor + labelText(state.frameText, w / 2, artH + caption * 0.55, textColor, w * 0.88, caption * 0.46) : decor;
+        return { w, h: artH + caption, x, y, decor: next };
+      }
+
+      function frameSquare(S, radius) {
+        const sw = Math.max(2, Math.round(S * 0.028));
+        const pad = Math.round(S * 0.045) + sw;
+        const w = S + pad * 2;
+        const decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${w - sw}" rx="${radius}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>`;
+        return withCaption(w, w, pad, pad, decor, state.frameColor);
+      }
+      function frameDouble(S) {
+        const sw = Math.max(2, Math.round(S * 0.016));
+        const gap = Math.round(S * 0.04);
+        const pad = gap + sw * 3 + Math.round(S * 0.03);
+        const w = S + pad * 2;
+        const rx = Math.round(S * 0.05);
+        const decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${w - sw}" rx="${rx}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>` +
+          `<rect x="${gap}" y="${gap}" width="${w - gap * 2}" height="${w - gap * 2}" rx="${Math.max(0, rx - gap / 2)}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>`;
+        return withCaption(w, w, pad, pad, decor, state.frameColor);
+      }
+      function frameStamp(S) {
+        const sw = Math.max(2, Math.round(S * 0.026));
+        const pad = Math.round(S * 0.05) + sw;
+        const w = S + pad * 2;
+        const rx = Math.round(S * 0.06);
+        const decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${w - sw}" rx="${rx}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}" stroke-dasharray="${Math.round(S * 0.03)} ${Math.round(S * 0.016)}"/>`;
+        return withCaption(w, w, pad, pad, decor, state.frameColor);
+      }
+      function frameThick(S) {
+        const border = Math.round(S * 0.085);
+        const w = S + border * 2;
+        const rx = Math.round(S * 0.1);
+        const decor = maskWindow(w, w, border, border, S) +
+          `<rect width="${w}" height="${w}" rx="${rx}" fill="${esc(state.frameColor)}" mask="url(#frame-mask)"/>`;
+        return withCaption(w, w, border, border, decor, state.frameColor);
+      }
+      function frameBanner(S, top) {
+        const pad = Math.round(S * 0.055);
+        const band = Math.round(S * 0.2);
+        const radius = Math.round(S * 0.075);
+        const w = S + pad * 2;
+        const h = S + pad * 2 + band;
+        const x = pad;
+        const y = top ? pad + band : pad;
+        const decor = maskWindow(w, h, x, y, S) +
+          `<rect width="${w}" height="${h}" rx="${radius}" fill="${esc(state.frameColor)}" mask="url(#frame-mask)"/>` +
+          labelText(state.frameText, w / 2, top ? band / 2 : h - band / 2, state.frameTextColor, w * 0.84, band * 0.42);
+        return { w, h, x, y, decor };
+      }
+      function frameBalloon(S) {
+        const sw = Math.max(2, Math.round(S * 0.022));
+        const pad = Math.round(S * 0.05);
+        const w = S + pad * 2;
+        const bubble = w;
+        const tail = Math.round(S * 0.08);
+        const caption = state.frameText.trim() ? Math.round(S * 0.18) : 0;
+        const h = bubble + tail + caption;
+        const rx = Math.round(S * 0.09);
+        const cx = w / 2;
+        const tw = Math.round(S * 0.07);
+        const base = bubble - sw / 2;
+        let decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${bubble - sw}" rx="${rx}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>` +
+          `<polygon points="${cx - tw},${base - 1} ${cx + tw},${base - 1} ${cx},${base + tail}" fill="${esc(state.frameColor)}"/>`;
+        if (caption) decor += labelText(state.frameText, w / 2, bubble + tail + caption * 0.55, state.frameColor, w * 0.9, caption * 0.42);
+        return { w, h, x: pad, y: pad, decor };
+      }
+      function frameCircle(S) {
+        const sw = Math.max(2, Math.round(S * 0.03));
+        const gap = Math.round(S * 0.3);
+        const d = S + gap * 2;
+        const caption = state.frameText.trim() ? Math.round(S * 0.18) : 0;
+        const decor = `<circle cx="${d / 2}" cy="${d / 2}" r="${(d - sw) / 2}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>` +
+          (caption ? labelText(state.frameText, d / 2, d + caption * 0.55, state.frameColor, d * 0.9, caption * 0.42) : "");
+        return { w: d, h: d + caption, x: gap, y: gap, decor };
+      }
+      function frameBrackets(S) {
+        const sw = Math.max(3, Math.round(S * 0.045));
+        const arm = Math.round(S * 0.16);
+        const pad = Math.round(S * 0.1);
+        const w = S + pad * 2;
+        const a = sw / 2;
+        const b = w - sw / 2;
+        const elbow = (x1, y1, x2, y2, x3, y3) => `<path d="M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}" stroke-linecap="square"/>`;
+        const decor = elbow(a, a + arm, a, a, a + arm, a) +
+          elbow(b - arm, a, b, a, b, a + arm) +
+          elbow(a, b - arm, a, b, a + arm, b) +
+          elbow(b - arm, b, b, b, b, b - arm);
+        return withCaption(w, w, pad, pad, decor, state.frameColor);
+      }
+      function frameTicket(S) {
+        const pad = Math.round(S * 0.085);
+        const band = Math.round(S * 0.2);
+        const radius = Math.round(S * 0.06);
+        const w = S + pad * 2;
+        const h = S + pad * 2 + band;
+        const notch = Math.round(S * 0.042);
+        const notchY = pad + S / 2;
+        const extra = `<circle cx="0" cy="${notchY}" r="${notch}" fill="#000"/><circle cx="${w}" cy="${notchY}" r="${notch}" fill="#000"/>`;
+        const decor = maskWindow(w, h, pad, pad, S, extra) +
+          `<rect width="${w}" height="${h}" rx="${radius}" fill="${esc(state.frameColor)}" mask="url(#frame-mask)"/>` +
+          labelText(state.frameText, w / 2, h - band / 2, state.frameTextColor, w * 0.72, band * 0.4);
+        return { w, h, x: pad, y: pad, decor };
+      }
+      function frameRibbon(S) {
+        const sw = Math.max(2, Math.round(S * 0.02));
+        const pad = Math.round(S * 0.045) + sw;
+        const w = S + pad * 2;
+        const band = Math.round(S * 0.18);
+        const bite = Math.round(S * 0.045);
+        const decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${w - sw}" rx="${Math.round(S * 0.04)}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>` +
+          `<path fill="${esc(state.frameColor)}" d="M 0 ${w} H ${w} L ${w - bite} ${w + band / 2} L ${w} ${w + band} H 0 L ${bite} ${w + band / 2} Z"/>` +
+          labelText(state.frameText, w / 2, w + band / 2, state.frameTextColor, w * 0.7, band * 0.4);
+        return { w, h: w + band, x: pad, y: pad, decor };
+      }
+      function frameTab(S) {
+        const sw = Math.max(2, Math.round(S * 0.024));
+        const tabH = Math.round(S * 0.16);
+        const pad = Math.round(tabH / 2 + S * 0.04);
+        const w = S + pad * 2;
+        const tabW = Math.round(w * 0.62);
+        const h = w + tabH / 2;
+        const tabX = (w - tabW) / 2;
+        const tabY = w - tabH / 2;
+        const decor = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${w - sw}" rx="${Math.round(S * 0.07)}" fill="none" stroke="${esc(state.frameColor)}" stroke-width="${sw}"/>` +
+          `<rect x="${tabX}" y="${tabY}" width="${tabW}" height="${tabH}" rx="${tabH / 2}" fill="${esc(state.frameColor)}"/>` +
+          labelText(state.frameText, w / 2, tabY + tabH / 2, state.frameTextColor, tabW * 0.82, tabH * 0.42);
+        return { w, h, x: pad, y: pad, decor };
+      }
+
+      const FRAME_BUILDERS = {
+        square: (S) => frameSquare(S, 0),
+        rounded: (S) => frameSquare(S, Math.round(S * 0.08)),
+        double: frameDouble,
+        stamp: frameStamp,
+        thick: frameThick,
+        banner: (S) => frameBanner(S, false),
+        "banner-top": (S) => frameBanner(S, true),
+        balloon: frameBalloon,
+        circle: frameCircle,
+        brackets: frameBrackets,
+        ticket: frameTicket,
+        ribbon: frameRibbon,
+        tab: frameTab,
+      };
+
+      function compose(qrSvg) {
+        const stripped = qrSvg.replace(/^\s*<\?xml[\s\S]*?\?>\s*/i, "");
+        if (state.frame === "none" || !FRAME_BUILDERS[state.frame]) return stripped;
+        const size = Math.round(Number((stripped.match(/\bwidth="([\d.]+)"/) || [])[1] || 0));
+        if (!size) return stripped;
+        const built = FRAME_BUILDERS[state.frame](size);
+        const qr = placeQr(stripped, built.x, built.y, size);
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${built.w}" height="${built.h}" viewBox="0 0 ${built.w} ${built.h}" role="img" aria-label="QR code">${built.decor}${qr}</svg>`;
+      }
+
+      async function drawSvg(data, size) {
+        const qr = new QRCodeStyling(buildOptions(data, size));
+        const blob = await qr.getRawData("svg");
+        if (!blob) throw new Error("empty");
+        return compose(await blob.text());
+      }
+
+      function showSvg(svg) {
+        const doc = new DOMParser().parseFromString(svg, "image/svg+xml");
+        if (doc.querySelector("parsererror")) throw new Error("bad svg");
+        placeholderEl.classList.add("hidden");
+        stage.querySelectorAll("svg").forEach((node) => node.remove());
+        stage.appendChild(document.importNode(doc.documentElement, true));
+        lastSvg = svg;
+        downloadPngBtn.disabled = false;
+        downloadSvgBtn.disabled = false;
+      }
+      function showEmpty() {
+        stage.querySelectorAll("svg").forEach((node) => node.remove());
+        placeholderEl.classList.remove("hidden");
+        lastSvg = "";
+        downloadPngBtn.disabled = true;
+        downloadSvgBtn.disabled = true;
+        errorEl.hidden = true;
+        notesEl.innerHTML = "";
+      }
+      function friendlyError(err) {
+        const msg = String((err && err.message) || err || "");
+        if (/overflow|too long|too big|code length/i.test(msg)) return "That text is too long for this error correction level. Shorten it, or switch to Low.";
+        if (state.logo && /image/i.test(msg)) return "That logo could not be used. Try a PNG or JPG.";
+        return "This design could not be drawn. Try a simpler shape or shorter text.";
+      }
+      function renderNotes() {
+        const notes = [];
+        if (state.logo && (state.ecl === "L" || state.ecl === "M")) {
+          notes.push("This logo covers part of the code. High error correction is the safer choice.");
+        }
+        if (!state.transparent) {
+          const colors = [state.fg];
+          if (state.gradient) colors.push(state.gradient2);
+          if (!eyesUseGradient()) {
+            if (!state.eyeFrameMatch) colors.push(state.eyeFrameColor);
+            if (!state.eyeBallMatch) colors.push(state.eyeBallColor);
+          }
+          const worst = Math.min(...colors.filter((color) => HEX.test(color)).map((color) => contrast(color, state.bg)));
+          const lightOnDark = luminance(state.bg) + 0.05 < luminance(state.fg);
+          if (worst < 2) notes.push("These colors are very close. Many phones will not scan this code.");
+          else if (lightOnDark) notes.push("Light marks on a dark background fail on some scanners. Dark marks on a light background are safer.");
+          else if (worst < 3.2) notes.push("Low contrast. A darker pattern on a lighter background scans more reliably.");
+        } else {
+          notes.push("A transparent background only scans when the code sits on a light, plain surface.");
+        }
+        notesEl.innerHTML = notes.map((note) => `<p class="${note.startsWith("A transparent") ? "note" : "warn"}">${esc(note)}</p>`).join("");
+      }
+
+      function schedule() {
+        window.clearTimeout(renderTimer);
+        renderTimer = window.setTimeout(() => { render(); }, 50);
+      }
+      async function render() {
+        const token = ++renderToken;
+        const text = contentEl.value.trim();
         if (!text) {
-          placeholderEl.classList.remove("hidden");
-          qrCanvas.style.display = "none";
-          downloadPngBtn.disabled = true;
-          downloadSvgBtn.disabled = true;
+          showEmpty();
           return;
         }
-        QRCode.toCanvas(qrCanvas, text, QR_OPTS, (err) => {
-          if (err) {
-            placeholderEl.classList.remove("hidden");
-            qrCanvas.style.display = "none";
-            downloadPngBtn.disabled = true;
-            downloadSvgBtn.disabled = true;
-            return;
-          }
-          placeholderEl.classList.add("hidden");
-          qrCanvas.style.display = "block";
-          downloadPngBtn.disabled = false;
-          downloadSvgBtn.disabled = false;
-        });
-        QRCode.toString(text, { ...QR_OPTS, type: "svg" }).then(s => { lastSvgString = s; }).catch(() => { lastSvgString = ""; });
-      }
-      function downloadPng() {
-        if (!(contentEl.value || "").trim()) return;
-        const link = document.createElement("a");
-        link.download = "qrcode.png";
-        link.href = qrCanvas.toDataURL("image/png");
-        link.click();
-      }
-      function doDownloadSvg(svg) {
-        const blob = new Blob([svg], { type: "image/svg+xml" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.download = "qrcode.svg";
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-      }
-      function downloadSvg() {
-        if (lastSvgString) doDownloadSvg(lastSvgString);
-        else {
-          const text = (contentEl.value || "").trim();
-          if (!text) return;
-          QRCode.toString(text, { ...QR_OPTS, type: "svg" }).then(doDownloadSvg);
+        try {
+          const svg = await drawSvg(text, PREVIEW);
+          if (token !== renderToken) return;
+          errorEl.hidden = true;
+          showSvg(svg);
+          renderNotes();
+        } catch (err) {
+          if (token !== renderToken) return;
+          console.error(err);
+          showEmpty();
+          errorEl.hidden = false;
+          errorEl.textContent = friendlyError(err);
         }
       }
-      const STORAGE_KEY = "qr-generator-theme";
+
+      function saveUrl(href, name) {
+        const link = document.createElement("a");
+        link.download = name;
+        link.href = href;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+      function svgToPng(svg) {
+        return new Promise((resolve, reject) => {
+          const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            URL.revokeObjectURL(url);
+            resolve(canvas.toDataURL("image/png"));
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("png"));
+          };
+          img.src = url;
+        });
+      }
+      async function download(ext) {
+        const text = contentEl.value.trim();
+        if (!text || busy) return;
+        busy = true;
+        downloadPngBtn.disabled = true;
+        downloadSvgBtn.disabled = true;
+        try {
+          const svg = await drawSvg(text, EXPORT);
+          if (ext === "svg") {
+            const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            saveUrl(url, "qrcode.svg");
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+          } else {
+            saveUrl(await svgToPng(svg), "qrcode.png");
+          }
+        } catch (err) {
+          console.error(err);
+          errorEl.hidden = false;
+          errorEl.textContent = "The file could not be saved. Try again.";
+        } finally {
+          busy = false;
+          if (contentEl.value.trim()) {
+            downloadPngBtn.disabled = false;
+            downloadSvgBtn.disabled = false;
+          }
+        }
+      }
+
+      function onColor(key, picker, hex, autoText) {
+        const apply = (value) => {
+          if (!HEX.test(value)) return;
+          state[key] = value.toLowerCase();
+          if (autoText && state.frameTextAuto) state.frameTextColor = contrastText(state.frameColor);
+          syncUI();
+          persist();
+          schedule();
+        };
+        picker.addEventListener("input", () => apply(picker.value));
+        hex.addEventListener("change", () => {
+          apply(readHex(hex, state[key]));
+          syncUI();
+        });
+      }
+
+      mountChoices($("bodyShapes"), BODY, "body", iconPattern);
+      mountChoices($("eyeFrameShapes"), EYE_FRAME, "eyeFrame", iconEyeFrame);
+      mountChoices($("eyeBallShapes"), EYE_BALL, "eyeBall", iconEyeBall);
+      mountChoices($("frameShapes"), FRAME_LIST, "frame", iconFrame);
+      mountSwatches($("inkSwatches"), INK, "fg");
+      mountSwatches($("paperSwatches"), PAPER, "bg");
+      mountTemplates();
+
+      document.body.addEventListener("click", (event) => {
+        const choice = event.target.closest(".shape-btn");
+        if (choice) {
+          state[choice.dataset.key] = choice.dataset.value;
+          if (choice.dataset.key === "frame" && state.frameTextAuto) state.frameTextColor = contrastText(state.frameColor);
+          syncUI();
+          persist();
+          schedule();
+          return;
+        }
+        const swatch = event.target.closest(".swatch");
+        if (swatch) {
+          state[swatch.dataset.key] = swatch.dataset.value.toLowerCase();
+          if (swatch.dataset.key === "bg") state.transparent = false;
+          syncUI();
+          persist();
+          schedule();
+          return;
+        }
+        const template = event.target.closest("[data-template]");
+        if (template) applyTemplate(template.dataset.template);
+        const segment = event.target.closest(".segment button");
+        if (segment && segment.parentElement) {
+          const id = segment.parentElement.id;
+          if (id === "gradType") state.gradientType = segment.dataset.value;
+          if (id === "gradDir") state.gradientDir = segment.dataset.value;
+          if (id === "codeShape") state.shape = segment.dataset.value;
+          syncUI();
+          persist();
+          schedule();
+        }
+      });
+
+      onColor("fg", $("fgPicker"), $("fgHex"));
+      onColor("bg", $("bgPicker"), $("bgHex"));
+      onColor("gradient2", $("g2Picker"), $("g2Hex"));
+      onColor("eyeFrameColor", $("eyeFramePicker"), $("eyeFrameHex"));
+      onColor("eyeBallColor", $("eyeBallPicker"), $("eyeBallHex"));
+      onColor("frameColor", $("frameColorPicker"), $("frameColorHex"), true);
+      $("frameTextPicker").addEventListener("input", () => {
+        state.frameTextAuto = false;
+        state.frameTextColor = $("frameTextPicker").value.toLowerCase();
+        $("frameTextHex").value = state.frameTextColor.toUpperCase();
+        persist();
+        schedule();
+      });
+      $("frameTextHex").addEventListener("change", () => {
+        state.frameTextAuto = false;
+        state.frameTextColor = readHex($("frameTextHex"), state.frameTextColor);
+        syncUI();
+        persist();
+        schedule();
+      });
+      $("frameText").addEventListener("input", () => {
+        state.frameText = $("frameText").value.slice(0, 32);
+        syncTemplates();
+        persist();
+        schedule();
+      });
+      $("transparent").addEventListener("change", () => { state.transparent = $("transparent").checked; syncUI(); persist(); schedule(); });
+      $("gradient").addEventListener("change", () => { state.gradient = $("gradient").checked; syncUI(); persist(); schedule(); });
+      $("gradientOnEyes").addEventListener("change", () => { state.gradientOnEyes = $("gradientOnEyes").checked; syncUI(); persist(); schedule(); });
+      $("eyeFrameMatch").addEventListener("change", () => { state.eyeFrameMatch = $("eyeFrameMatch").checked; syncUI(); persist(); schedule(); });
+      $("eyeBallMatch").addEventListener("change", () => { state.eyeBallMatch = $("eyeBallMatch").checked; syncUI(); persist(); schedule(); });
+      $("logoClearDots").addEventListener("change", () => { state.logoClear = $("logoClearDots").checked; syncUI(); persist(); schedule(); });
+      $("ecl").addEventListener("change", () => { state.ecl = $("ecl").value; syncUI(); persist(); schedule(); });
+      $("margin").addEventListener("input", () => { state.margin = Number($("margin").value); syncTemplates(); persist(); schedule(); });
+      $("bgRound").addEventListener("input", () => { state.bgRound = Number($("bgRound").value); syncTemplates(); persist(); schedule(); });
+      $("logoSize").addEventListener("input", () => { state.logoSize = Number($("logoSize").value) / 100; syncTemplates(); persist(); schedule(); });
+      $("logoMargin").addEventListener("input", () => { state.logoMargin = Number($("logoMargin").value); syncTemplates(); persist(); schedule(); });
+      $("logoFile").addEventListener("change", () => {
+        const file = $("logoFile").files && $("logoFile").files[0];
+        $("logoFile").value = "";
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+          errorEl.hidden = false;
+          errorEl.textContent = "That logo is over 2 MB. Choose a smaller image.";
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            state.logo = String(reader.result);
+            state.logoName = file.name;
+            if (state.ecl === "L" || state.ecl === "M") state.ecl = "H";
+            errorEl.hidden = true;
+            syncUI();
+            persist();
+            schedule();
+          };
+          img.onerror = () => {
+            errorEl.hidden = false;
+            errorEl.textContent = "That logo could not be read. Try a PNG or JPG.";
+          };
+          img.src = String(reader.result);
+        };
+        reader.readAsDataURL(file);
+      });
+      $("logoClear").addEventListener("click", () => {
+        state.logo = "";
+        state.logoName = "";
+        syncUI();
+        schedule();
+      });
+      $("resetDesign").addEventListener("click", resetDesign);
+      contentEl.addEventListener("input", schedule);
+      downloadPngBtn.addEventListener("click", () => download("png"));
+      downloadSvgBtn.addEventListener("click", () => download("svg"));
+
       const root = document.documentElement;
       function getTheme() {
         try {
-          const saved = localStorage.getItem(STORAGE_KEY);
+          const saved = localStorage.getItem(THEME_KEY);
           if (saved === "light" || saved === "dark") return saved;
           if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
         } catch (_) {}
@@ -169,17 +1157,16 @@
       function setTheme(theme) {
         const value = theme === "light" ? "light" : "dark";
         root.setAttribute("data-theme", value);
-        try { localStorage.setItem(STORAGE_KEY, value); } catch (_) {}
-      }
-      function toggleTheme() {
-        setTheme((root.getAttribute("data-theme") || "light") === "light" ? "dark" : "light");
+        try { localStorage.setItem(THEME_KEY, value); } catch (_) {}
       }
       setTheme(getTheme());
-      if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
-      contentEl.addEventListener("input", renderQR);
-      contentEl.addEventListener("paste", () => { setTimeout(renderQR, 0); });
-      downloadPngBtn.addEventListener("click", downloadPng);
-      downloadSvgBtn.addEventListener("click", downloadSvg);
+      $("themeToggle").addEventListener("click", () => {
+        setTheme((root.getAttribute("data-theme") || "light") === "light" ? "dark" : "light");
+      });
+
+      loadDesign();
+      syncUI();
+      if (contentEl.value.trim()) schedule();
     </script>
   </body>
 </html>
